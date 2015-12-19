@@ -25,10 +25,6 @@ class Wave:
     def median_filtered(self):
         return signal.medfilt(self.waveData_y)
 
-    def lfilter(self, N, Wn, btype):
-        b,a = signal.butter(N, Wn, btype)
-        return signal.lfilter(b, a, self.waveData_y)
-
     def fft_filtered(self):
         length = len(self.waveData_y)
         spectrum = fftpack.fft(self.waveData_y)
@@ -45,7 +41,7 @@ class Wave:
 
     def find_peak(self, threshold, filtered=False):
         (working_wave_x, working_wave_y) = (self.filtered_wave_x, self.filtered_wave_y) if filtered else (self.waveData_x, self.waveData_y)
-        step = 100
+        step = 30
         division = []
         result = []
 

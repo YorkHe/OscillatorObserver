@@ -1,5 +1,7 @@
 .idea
 data
-test/*
+test/script.py
+test/38.txt
+test/foo.png
 
 !libs/data
