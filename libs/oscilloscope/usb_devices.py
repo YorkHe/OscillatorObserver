@@ -1,18 +1,20 @@
 import visa
-
+import sys
+from ..utils.error import Error
 
 def find_instrument(name):
     resource_manager = visa.ResourceManager()
     resource_list = resource_manager.list_resources()
 
-    selected_instrument = ""
-
 #Only one valid input by default
-    instrument_list = [resource_manager.open_resource(resource) for resource in resource_list]
-    for instrument in instrument_list:
-        if instrument.query('*IDN?').find(name) != -1:
-            selected_instrument = instrument
-
-    return selected_instrument
+    for resource in resource_list:
+        try:
+            device = resource_manager.open_resource(resource)
+            #TODO: Specific Exceptions
+        except:
+            Error("find_instrument", sys.exec_info()[0])
+        else:
+            if device.query('*IDN?').find(name) != -1:
+                return device
 
 
