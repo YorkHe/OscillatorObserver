@@ -18,10 +18,9 @@ class ChannelParameters:
 
 
 class TDS1012B:
-    def __init__(self, sn):
+    def __init__(self):
         self.visa = find_instrument("TDS1012B")
         self.identity = 'TDS1012B'
-        self.sn = sn.upper()
         self.channel1 = ChannelParameters(1)
         self.channel2 = ChannelParameters(2)
 
@@ -65,17 +64,17 @@ class TDS1012B:
 
         self.write('data:source ch' + str(ch_parameter.channel))
 
-        ch_parameter.xunit = self.query('wfmpre:xunit?').strip().strip('"')
+        ch_parameter.x_unit = self.query('wfmpre:xunit?').strip().strip('"')
 
-        ch_parameter.xinc = float(self.query('wfmpre:xinc?').strip())
+        ch_parameter.x_inc = float(self.query('wfmpre:xinc?').strip())
 
-        ch_parameter.yunit = self.query('wfmpre:yunit?').strip().strip('"')
+        ch_parameter.y_unit = self.query('wfmpre:yunit?').strip().strip('"')
 
-        ch_parameter.ymult = float(self.query('wfmpre:ymult?').strip().strip('"'))
+        ch_parameter.y_mult = float(self.query('wfmpre:ymult?').strip().strip('"'))
 
-        ch_parameter.yoff = float(self.query('wfmpre:yoff?').strip().strip('"'))
+        ch_parameter.y_off = float(self.query('wfmpre:yoff?').strip().strip('"'))
 
-        ch_parameter.yzero = float(self.query('wfmpre.yzero?').strip().strip('"'))
+        ch_parameter.y_zero = float(self.query('wfmpre.yzero?').strip().strip('"'))
 
         return {}
 
