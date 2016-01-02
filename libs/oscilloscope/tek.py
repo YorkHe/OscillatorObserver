@@ -91,8 +91,6 @@ class TDS1012B:
             e = Error("get_wave_form", "Incorrect channel parameter.")
             return e
 
-        self.write('data:source ch'+str(ch_parameter.channel))
-        self.write('data:encdg ascii')
         self.write('curve?')
 
         wave = self.read().split(',')
