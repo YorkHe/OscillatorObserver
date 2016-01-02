@@ -2,6 +2,7 @@ from usb_devices import *
 from pylab import *
 from numpy import *
 from ..utils.error import *
+from wave import Wave
 import time
 import string
 
@@ -19,7 +20,7 @@ class ChannelParameters:
 
 class TDS1012B:
     def __init__(self):
-        self.visa = find_instrument("TDS1012B")
+        self.visa = find_instrument("TDS 1012B")
         self.identity = 'TDS1012B'
         self.channel1 = ChannelParameters(1)
         self.channel2 = ChannelParameters(2)
@@ -65,24 +66,30 @@ class TDS1012B:
         self.write('data:source ch' + str(ch_parameter.channel))
 
         ch_parameter.x_unit = self.query('wfmpre:xunit?').strip().strip('"')
+        print ch_parameter.x_unit
 
         ch_parameter.x_inc = float(self.query('wfmpre:xinc?').strip())
+        print ch_parameter.x_inc
 
         ch_parameter.y_unit = self.query('wfmpre:yunit?').strip().strip('"')
+        print ch_parameter.y_unit
 
         ch_parameter.y_mult = float(self.query('wfmpre:ymult?').strip().strip('"'))
+        print ch_parameter.y_mult
 
         ch_parameter.y_off = float(self.query('wfmpre:yoff?').strip().strip('"'))
+        print ch_parameter.y_off
 
-        ch_parameter.y_zero = float(self.query('wfmpre.yzero?').strip().strip('"'))
+        ch_parameter.y_zero = float(self.query('wfmpre:yzero?').strip().strip('"'))
+        print ch_parameter.y_zero
 
         return {}
 
     def get_wave_form(self, ch_parameter):
         e = {}
-        if ch_parameter > 2 | ch_parameter < 1:
+        if ch_parameter.channel > 2 | ch_parameter.channel < 1:
             e = Error("get_wave_form", "Incorrect channel parameter.")
-            return e, [], []
+            return e
 
         self.write('data:source ch'+str(ch_parameter.channel))
         self.write('data:encdg ascii')
@@ -90,7 +97,8 @@ class TDS1012B:
 
         wave = self.read().split(',')
         x, y = self.scale_wave_form(wave, ch_parameter)
-        return e, x, y
+        self.wave = Wave(x,y)
+        return e
 
     def scale_wave_form(self, wave, ch_parameter):
         y = []
@@ -98,12 +106,7 @@ class TDS1012B:
         x_pos = 0
 
         for data in wave:
-            y.append((float(data)-ch_parameter.yoff)*ch_parameter.ymult + ch_parameter.yzero)
+            y.append((float(data)-ch_parameter.y_off)*ch_parameter.y_mult + ch_parameter.y_zero)
             x.append(x_pos)
-            x_pos += ch_parameter.xinc
+            x_pos += ch_parameter.x_inc
         return x, y
-
-
-
-
-
